@@ -1,12 +1,21 @@
 #include "jsymk33.h"
 
-#include "driver/uart.h"
 #include "jsy_crc.h"
+
 #include "esp_check.h"
 #include "esp_timer.h"
+#include "driver/uart.h"
 
-#include <string.h>
 
+/**
+ * @brief Reads a single 16-bit register from the device and converts it to a float.
+ *
+ * @param handle Pointer to the communication handle.
+ * @param address Register address to read from.
+ * @param reg_value Reference to the float where the result will be stored.
+ * @param factor Conversion factor to apply to the read value.
+ * @return ESP_OK on successful read, ESP_FAIL otherwise.
+ */
 esp_err_t jsymk33_read_single_register(jsymk33_handle_t handle, uint16_t address, float& reg_value, float factor) {
     uint16_t reg;
     if (jsymk33_send_cmd_8(handle, 0x03, address, 1, true, OxFFFF) == ESP_OK) {
@@ -22,6 +31,15 @@ esp_err_t jsymk33_read_single_register(jsymk33_handle_t handle, uint16_t address
     return ESP_FAIL;
 }
 
+/**
+ * @brief Reads a double register (32 bits) from the device and converts it to a float.
+ *
+ * @param handle Pointer to the communication handle.
+ * @param address Register address to read from.
+ * @param reg_value Reference to the float where the result will be stored.
+ * @param factor Conversion factor to apply to the read value.
+ * @return ESP_OK on successful read, ESP_FAIL otherwise.
+ */
 esp_err_t jsymk33_read_double_register(jsymk33_handle_t handle, uint16_t address, float& reg_value, float factor) {
     uint16_t regs[2];
     if (jsymk33_send_cmd_8(handle, 0x03, address, 2, true, OxFFFF) == ESP_OK) {
@@ -38,6 +56,18 @@ esp_err_t jsymk33_read_double_register(jsymk33_handle_t handle, uint16_t address
     return ESP_FAIL;
 }
 
+/**
+ * @brief Receives data from the UART port.
+ *
+ * This function reads data from the UART buffer until the desired length is reached or the timeout expires.
+ *
+ * @param handle Pointer to the communication handle.
+ * @param resp Buffer to store the received data.
+ * @param len Number of bytes expected to be read.
+ * @param readed_bytes Reference to a variable where the number of bytes read will be stored.
+ * @param timeout_ms Timeout in milliseconds for receiving data.
+ * @return ESP_OK if data is successfully received, ESP_FAIL otherwise.
+ */
 esp_err_t jsymk33_receive(jsymk33_handle_t handle, uint8_t *resp, uint16_t len, uint16_t& readed_bytes, uint32_t timeout_ms) {
     if (!handle) {
         return ESP_FAIL;
@@ -58,6 +88,17 @@ esp_err_t jsymk33_receive(jsymk33_handle_t handle, uint8_t *resp, uint16_t len, 
     return ESP_OK;
 }
 
+/**
+ * @brief Sends a command via UART and optionally checks the response.
+ *
+ * @param handle Pointer to the communication handle.
+ * @param cmd Command code to send.
+ * @param r_addr Register address to communicate with.
+ * @param val Value to be sent to the register.
+ * @param check Boolean flag indicating whether to check the response.
+ * @param slave_addr Address of the slave device (1 - 247).
+ * @return ESP_OK if the command is successfully sent and validated (if applicable).
+ */
 esp_err_t jsymk33_send_cmd_8(jsymk33_handle_t handle, uint8_t cmd, uint16_t r_addr, uint16_t val, bool check, uint16_t slave_addr) {
     if (!handle) {
         return ESP_FAIL;
@@ -93,6 +134,7 @@ esp_err_t jsymk33_send_cmd_8(jsymk33_handle_t handle, uint8_t cmd, uint16_t r_ad
     }
     return ESP_OK;
 }
+
 
 esp_err_t jsymk33_init(jsymk33_handle_t handle, jsymk33_config_t *conf) {
     uart_config_t uart_config;
