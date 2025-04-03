@@ -147,11 +147,11 @@ esp_err_t jsymk33_init(jsymk33_handle_t handle, jsymk33_config_t *conf) {
     uart_config.rx_flow_ctrl_thresh = 122;
 
     // Configure UART parameters
-    ESP_ERROR_CHECK(uart_param_config(conf->uart_num, &uart_config));
-    ESP_ERROR_CHECK(uart_set_pin(conf->uart_num, conf->tx_pin, conf->rx_pin, -1, -1));
+    ESP_GOTO_ON_ERROR(uart_param_config(conf->uart_num, &uart_config), err, "JSYMK33", "Failed to configure UART parameters"));
+    ESP_GOTO_ON_ERROR(uart_set_pin(conf->uart_num, conf->tx_pin, conf->rx_pin, -1, -1), err, "JSYMK33", "Failed to set UART pins"));
 
     // Install UART driver using an event queue here
-    ESP_ERROR_CHECK(uart_driver_install(conf->uart_num, conf->uart_buffer_size, conf->uart_buffer_size, 10, &conf->uart_queue, 0));
+    ESP_GOTO_ON_ERROR(uart_driver_install(conf->uart_num, conf->uart_buffer_size, conf->uart_buffer_size, 10, &conf->uart_queue, 0), err, "JSYMK33", "Failed to install UART driver"));
   
     // Flush the input buffer
     uart_flush_input(conf->uart_num);
@@ -160,16 +160,34 @@ esp_err_t jsymk33_init(jsymk33_handle_t handle, jsymk33_config_t *conf) {
     memcpy(handle, conf, sizeof(jsymk33_config_t));
 
     return ESP_OK;
+err:
+    if (handle) {
+        free(handle);
+    }
+
+    if (uart_is_driver_installed(conf->uart_num)) {
+        uart_driver_delete(conf->uart_num);
+    }
+    ESP_LOGE("JSYMK33", "Failed to initialize JSYMK33");
+    return ESP_FAIL;
 }
 
 esp_err_t jsymk33_deinit(jsymk33_handle_t handle) {
     if (!handle) {
         return ESP_FAIL;
     }
-    if (uart_is_driver_installed(handle->uart_num)) {
-        return uart_driver_delete(handle->uart_num);
+
+    esp_err_t err = ESP_OK;
+    jsymk33_config_t* conf = (jsymk33_config_t)handle;
+
+    // Delete the UART driver
+    if (uart_is_driver_installed(conf->uart_num)) {
+        err = uart_driver_delete(conf->uart_num);
     }
-    return ESP_OK;
+
+    free(handle);
+    handle = NULL;
+    return err;
 }
 
 esp_err_t jsymk33_read_voltage_A(jsymk33_handle_t handle, float& value) { 

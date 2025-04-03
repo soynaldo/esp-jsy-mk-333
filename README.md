@@ -34,11 +34,20 @@ To use this component in your project, you first need to include it and configur
 Before using the component, you need to create a communication handler and configure the device. Here’s an example of how to do it:
 
 ```c
+// Define the device configuration
+jsymk33_config_t config = {
+    .uart_num = 2, 
+    .baud = 115200,
+    .rx_pin = 16,
+    .tx_pin = 17,
+    .uart_buffer_size = 512,
+};
+
 // Define the device handle
 jsymk33_handle_t device_handle = NULL;
 
-// Initialize the device with the communication port (e.g., I2C or SPI)
-esp_err_t ret = jsymk33_init(&device_handle, I2C_PORT, DEVICE_ADDRESS);
+// Initialize the device with the configuration
+esp_err_t ret = jsymk33_init(device_handle, &config);
 if (ret != ESP_OK) {
     ESP_LOGE("JSYM", "Failed to initialize the device");
     return;
