@@ -6,7 +6,9 @@
 #ifndef __JSY_CRC_CHECK
 #define __JSY_CRC_CHECK
 
-#include <stdbit.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <string.h>
 
 
 /**

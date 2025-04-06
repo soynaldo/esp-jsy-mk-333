@@ -3,14 +3,14 @@
 bool jsy_check_crc(const uint8_t *buf, uint16_t len) {
     if (len <= 2) return false;
 
-    uint16_t crc = CRC16(buf, len - 2);
+    uint16_t crc = jsy_crc_16(buf, len - 2);
     return ((uint16_t)buf[len - 2] | (uint16_t)buf[len - 1] << 8) == crc;
 }
 
 void jsy_set_crc(uint8_t *buf, uint16_t len) {
     if (len <= 2) return;
 
-    uint16_t crc = CRC16(buf, len - 2);
+    uint16_t crc = jsy_crc_16(buf, len - 2);
     buf[len - 2] = crc & 0xFF;
     buf[len - 1] = (crc >> 8) & 0xFF;
 }

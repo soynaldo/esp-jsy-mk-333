@@ -4,6 +4,8 @@
 
 This is a component/library for interfacing with the JSYM-K33 energy monitoring device using ESP-IDF. It provides functions to read various electrical parameters such as voltage, current, power, energy, power factor, and frequency from the device through a communication protocol.
 
+This component is based on the [https://github.com/saniyo/JSY-MK-333](https://github.com/saniyo/JSY-MK-333) repo.
+
 ## Features
 - Read voltage, current, power, energy, power factor, and frequency for all three phases (A, B, C).
 - Support for total power and energy measurements.
@@ -63,7 +65,7 @@ float voltage_A = 0.0;
 float current_A = 0.0;
 
 // Read the voltage for phase A
-ret = jsymk33_read_voltage_A(device_handle, voltage_A);
+ret = jsymk33_read_voltage_A(device_handle, &voltage_A);
 if (ret == ESP_OK) {
     ESP_LOGI("JSYM", "Voltage A: %.2f V", voltage_A);
 } else {
@@ -71,7 +73,7 @@ if (ret == ESP_OK) {
 }
 
 // Read the current for phase A
-ret = jsymk33_read_current_A(device_handle, current_A);
+ret = jsymk33_read_current_A(device_handle, &current_A);
 if (ret == ESP_OK) {
     ESP_LOGI("JSYM", "Current A: %.2f A", current_A);
 } else {

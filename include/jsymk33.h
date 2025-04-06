@@ -4,8 +4,9 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "esp_err_t.h"
-#include "freeRTOS/queue.h"
+#include "esp_err.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/queue.h"
 
 /**
  * @brief Configuration structure for UART communication.
@@ -62,7 +63,7 @@ esp_err_t jsymk33_deinit(jsymk33_handle_t handle);
  * @param value Reference to a float where the voltage will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_voltage_A(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_voltage_A(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the phase B voltage.
@@ -71,7 +72,7 @@ esp_err_t jsymk33_read_voltage_A(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the voltage will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_voltage_B(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_voltage_B(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the phase C voltage.
@@ -80,7 +81,7 @@ esp_err_t jsymk33_read_voltage_B(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the voltage will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_voltage_C(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_voltage_C(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the phase A current.
@@ -89,7 +90,7 @@ esp_err_t jsymk33_read_voltage_C(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the current will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_current_A(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_current_A(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the phase B current.
@@ -98,7 +99,7 @@ esp_err_t jsymk33_read_current_A(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the current will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_current_B(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_current_B(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the phase C current.
@@ -107,7 +108,7 @@ esp_err_t jsymk33_read_current_B(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the current will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_current_C(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_current_C(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the active power for phase A.
@@ -116,7 +117,7 @@ esp_err_t jsymk33_read_current_C(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the power will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_active_power_A(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_active_power_A(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the active power for phase B.
@@ -125,7 +126,7 @@ esp_err_t jsymk33_read_active_power_A(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the power will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_active_power_B(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_active_power_B(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the active power for phase C.
@@ -134,7 +135,7 @@ esp_err_t jsymk33_read_active_power_B(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the power will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_active_power_C(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_active_power_C(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the total active power.
@@ -143,7 +144,7 @@ esp_err_t jsymk33_read_active_power_C(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the power will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_total_active_power(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_total_active_power(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the reactive power for phase A.
@@ -152,7 +153,7 @@ esp_err_t jsymk33_read_total_active_power(jsymk33_handle_t handle, float& value)
  * @param value Reference to a float where the power will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_reactive_power_A(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_reactive_power_A(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the reactive power for phase B.
@@ -161,7 +162,7 @@ esp_err_t jsymk33_read_reactive_power_A(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the power will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_reactive_power_B(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_reactive_power_B(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the reactive power for phase C.
@@ -170,7 +171,7 @@ esp_err_t jsymk33_read_reactive_power_B(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the power will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_reactive_power_C(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_reactive_power_C(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the total reactive power.
@@ -179,7 +180,7 @@ esp_err_t jsymk33_read_reactive_power_C(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the power will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_total_reactive_power(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_total_reactive_power(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the apparent power for phase A.
@@ -188,7 +189,7 @@ esp_err_t jsymk33_read_total_reactive_power(jsymk33_handle_t handle, float& valu
  * @param value Reference to a float where the power will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_apparent_power_A(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_apparent_power_A(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the apparent power for phase B.
@@ -197,7 +198,7 @@ esp_err_t jsymk33_read_apparent_power_A(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the power will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_apparent_power_B(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_apparent_power_B(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the apparent power for phase C.
@@ -206,7 +207,7 @@ esp_err_t jsymk33_read_apparent_power_B(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the power will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_apparent_power_C(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_apparent_power_C(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the total apparent power.
@@ -215,7 +216,7 @@ esp_err_t jsymk33_read_apparent_power_C(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the power will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_total_apparent_power(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_total_apparent_power(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the frequency.
@@ -224,7 +225,7 @@ esp_err_t jsymk33_read_total_apparent_power(jsymk33_handle_t handle, float& valu
  * @param value Reference to a float where the frequency will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_frequency(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_frequency(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the power factor for phase A.
@@ -233,7 +234,7 @@ esp_err_t jsymk33_read_frequency(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the power factor will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_power_factor_A(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_power_factor_A(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the power factor for phase B.
@@ -242,7 +243,7 @@ esp_err_t jsymk33_read_power_factor_A(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the power factor will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_power_factor_B(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_power_factor_B(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the power factor for phase C.
@@ -251,7 +252,7 @@ esp_err_t jsymk33_read_power_factor_B(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the power factor will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_power_factor_C(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_power_factor_C(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the total power factor.
@@ -260,7 +261,7 @@ esp_err_t jsymk33_read_power_factor_C(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the power factor will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_total_power_factor(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_total_power_factor(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the active energy for phase A.
@@ -269,7 +270,7 @@ esp_err_t jsymk33_read_total_power_factor(jsymk33_handle_t handle, float& value)
  * @param value Reference to a float where the energy will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_active_energy_A(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_active_energy_A(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the active energy for phase B.
@@ -278,7 +279,7 @@ esp_err_t jsymk33_read_active_energy_A(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the energy will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_active_energy_B(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_active_energy_B(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the active energy for phase C.
@@ -287,7 +288,7 @@ esp_err_t jsymk33_read_active_energy_B(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the energy will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_active_energy_C(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_active_energy_C(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the total active energy.
@@ -296,7 +297,7 @@ esp_err_t jsymk33_read_active_energy_C(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the energy will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_total_active_energy(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_total_active_energy(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the reactive energy for phase A.
@@ -305,7 +306,7 @@ esp_err_t jsymk33_read_total_active_energy(jsymk33_handle_t handle, float& value
  * @param value Reference to a float where the energy will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_reactive_energy_A(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_reactive_energy_A(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the reactive energy for phase B.
@@ -314,7 +315,7 @@ esp_err_t jsymk33_read_reactive_energy_A(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the energy will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_reactive_energy_B(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_reactive_energy_B(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the reactive energy for phase C.
@@ -323,7 +324,7 @@ esp_err_t jsymk33_read_reactive_energy_B(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the energy will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_reactive_energy_C(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_reactive_energy_C(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the total reactive energy.
@@ -332,7 +333,7 @@ esp_err_t jsymk33_read_reactive_energy_C(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the energy will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_total_reactive_energy(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_total_reactive_energy(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the apparent energy for phase A.
@@ -341,7 +342,7 @@ esp_err_t jsymk33_read_total_reactive_energy(jsymk33_handle_t handle, float& val
  * @param value Reference to a float where the energy will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_apparent_energy_A(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_apparent_energy_A(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the apparent energy for phase B.
@@ -350,7 +351,7 @@ esp_err_t jsymk33_read_apparent_energy_A(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the energy will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_apparent_energy_B(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_apparent_energy_B(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the apparent energy for phase C.
@@ -359,7 +360,7 @@ esp_err_t jsymk33_read_apparent_energy_B(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the energy will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_apparent_energy_C(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_apparent_energy_C(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the total apparent energy.
@@ -368,7 +369,7 @@ esp_err_t jsymk33_read_apparent_energy_C(jsymk33_handle_t handle, float& value);
  * @param value Reference to a float where the energy will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_total_apparent_energy(jsymk33_handle_t handle, float& value);
+esp_err_t jsymk33_read_total_apparent_energy(jsymk33_handle_t handle, float *value);
 
 /**
  * @brief Reads the power direction.
@@ -377,7 +378,7 @@ esp_err_t jsymk33_read_total_apparent_energy(jsymk33_handle_t handle, float& val
  * @param value Reference to a uint16_t where the power direction will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_power_direction(jsymk33_handle_t handle, uint16_t& value);
+esp_err_t jsymk33_read_power_direction(jsymk33_handle_t handle, uint16_t *value);
 
 /**
  * @brief Reads the alarm status.
@@ -386,7 +387,7 @@ esp_err_t jsymk33_read_power_direction(jsymk33_handle_t handle, uint16_t& value)
  * @param value Reference to a uint16_t where the alarm status will be stored.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_alarm_status(jsymk33_handle_t handle, uint16_t& value );
+esp_err_t jsymk33_read_alarm_status(jsymk33_handle_t handle, uint16_t *value);
 
 
 #endif // __JSY_MK_33_LIB
