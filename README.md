@@ -28,7 +28,7 @@ To use this component in your project, you first need to include it and configur
 ### Step 1: Include Necessary Headers
 
 ```cpp
-#include "jsymk33.h"
+#include "jsymk333.h"
 ```
 
 ### Step 2: Configuration and Initialization
