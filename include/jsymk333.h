@@ -41,7 +41,7 @@ typedef void *jsymk333_handle_t;
  * @param conf Pointer to the configuration structure.
  * @return ESP_OK on success, or an appropriate error code on failure.
  */
-esp_err_t jsymk333_init(jsymk333_handle_t handle, jsymk333_config_t *conf);
+esp_err_t jsymk333_init(jsymk333_handle_t *handle, jsymk333_config_t *conf);
 
 /**
  * @brief Deinitializes the JSYM K33 communication module.

@@ -29,11 +29,12 @@ esp_err_t jsymk333_receive(jsymk333_handle_t handle, uint8_t *resp, uint16_t len
     *readed_bytes = 0;
 
     while ((*readed_bytes < len) && ((esp_timer_get_time() / 1000L) - time_cmp) < timeout_ms) {
-        size_t available;
-        uart_get_buffered_data_len(conf->uart_num, &available);
-        if (available) {
-            available = uart_read_bytes(conf->uart_num, resp + *readed_bytes, available, 0);
-            *readed_bytes += available;
+        size_t available = 0;
+        if (uart_get_buffered_data_len(conf->uart_num, &available) == ESP_OK) {
+            if (available) {
+                available = uart_read_bytes(conf->uart_num, resp + *readed_bytes, available, 0);
+                *readed_bytes += available;
+            }
         }
     }
 
@@ -147,7 +148,7 @@ esp_err_t jsymk333_read_double_register(jsymk333_handle_t handle, uint16_t addre
     return ESP_FAIL;
 }
 
-esp_err_t jsymk333_init(jsymk333_handle_t handle, jsymk333_config_t *conf) {
+esp_err_t jsymk333_init(jsymk333_handle_t *handle, jsymk333_config_t *conf) {
     uart_config_t uart_config;
     esp_err_t ret = ESP_OK;
     memset(&uart_config, 0, sizeof(uart_config_t));
@@ -168,8 +169,9 @@ esp_err_t jsymk333_init(jsymk333_handle_t handle, jsymk333_config_t *conf) {
     // Flush the input buffer
     uart_flush_input(conf->uart_num);
 
-    handle = (jsymk333_handle_t)malloc(sizeof(jsymk333_config_t));
-    memcpy(handle, conf, sizeof(jsymk333_config_t));
+    *handle = (jsymk333_handle_t)malloc(sizeof(jsymk333_config_t));
+    ESP_GOTO_ON_FALSE(*handle, ESP_ERR_NO_MEM, err, "JSYMK333", "Failed to allocate memory for JSYMK333 handle");
+    memcpy(*handle, conf, sizeof(jsymk333_config_t));
 
     return ESP_OK;
 err:
@@ -177,9 +179,9 @@ err:
         uart_driver_delete(conf->uart_num);
     }
 
-    if (handle) {
-        free(handle);
-        handle = NULL;
+    if (*handle) {
+        free(*handle);
+        *handle = NULL;
     }
     ESP_LOGE("JSYMK333", "Failed to initialize JSYMK333 device (%s)", esp_err_to_name(ret));
     return ret;
