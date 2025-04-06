@@ -21,6 +21,7 @@
  */
 esp_err_t jsymk333_receive(jsymk333_handle_t handle, uint8_t *resp, uint16_t len, uint16_t* readed_bytes, uint32_t timeout_ms) {
     if (!handle) {
+        ESP_LOGE("JSYMK333", "Invalid handle");
         return ESP_FAIL;
     }
     jsymk333_config_t* conf = (jsymk333_config_t*)handle;
@@ -35,6 +36,10 @@ esp_err_t jsymk333_receive(jsymk333_handle_t handle, uint8_t *resp, uint16_t len
             *readed_bytes += available;
         }
     }
+
+#if CONFIG_JSY_MK_333_PRINT_BUFFER
+    ESP_LOG_BUFFER_HEXDUMP("JSYMK333-RX", resp, *readed_bytes, ESP_LOG_INFO);
+#endif
 
     return ESP_OK;
 }
@@ -52,6 +57,7 @@ esp_err_t jsymk333_receive(jsymk333_handle_t handle, uint8_t *resp, uint16_t len
  */
 esp_err_t jsymk333_send_cmd_8(jsymk333_handle_t handle, uint8_t cmd, uint16_t r_addr, uint16_t val, bool check, uint16_t slave_addr) {
     if (!handle) {
+        ESP_LOGE("JSYMK333", "Invalid handle");
         return ESP_FAIL;
     }
     jsymk333_config_t* conf = (jsymk333_config_t*)handle;
@@ -68,18 +74,24 @@ esp_err_t jsymk333_send_cmd_8(jsymk333_handle_t handle, uint8_t cmd, uint16_t r_
     memcpy(send_buffer, &val, sizeof(val));
     jsy_set_crc(send_buffer, 8);
     uart_write_bytes(conf->uart_num, send_buffer, 8);
+#if CONFIG_JSY_MK_333_PRINT_BUFFER
+    ESP_LOG_BUFFER_HEXDUMP("JSYMK333-TX", send_buffer, 8, ESP_LOG_INFO);
+#endif
 
     if (check) {
         uint16_t readed_bytes = 0;
         if (jsymk333_receive(handle, resp_buffer, 8, &readed_bytes, 500) != ESP_OK) {
+            ESP_LOGE("JSYMK333", "Failed to receive response");
             return ESP_FAIL;
         }
 
         if (readed_bytes != 8) {
+            ESP_LOGE("JSYMK333", "Invalid response length: %d", readed_bytes);
             return ESP_FAIL;
         }
 
         if (memcmp(send_buffer, resp_buffer, 8)) {
+            ESP_LOGE("JSYMK333", "Response mismatch");
             return ESP_FAIL;
         }
     }
@@ -169,8 +181,8 @@ err:
         free(handle);
         handle = NULL;
     }
-    ESP_LOGE("JSYMK333", "Failed to initialize JSYMK333");
-    return ESP_FAIL;
+    ESP_LOGE("JSYMK333", "Failed to initialize JSYMK333 device (%s)", esp_err_to_name(ret));
+    return ret;
 }
 
 esp_err_t jsymk333_deinit(jsymk333_handle_t handle) {

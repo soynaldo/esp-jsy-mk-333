@@ -37,7 +37,7 @@ Before using the component, you need to create a communication handler and confi
 
 ```c
 // Define the device configuration
-jsymk33_config_t config = {
+jsymk333_config_t config = {
     .uart_num = 2, 
     .baud = 115200,
     .rx_pin = 16,
@@ -46,12 +46,12 @@ jsymk33_config_t config = {
 };
 
 // Define the device handle
-jsymk33_handle_t device_handle = NULL;
+jsymk333_handle_t device_handle = NULL;
 
 // Initialize the device with the configuration
 esp_err_t ret = jsymk333_init(device_handle, &config);
 if (ret != ESP_OK) {
-    ESP_LOGE("JSYM", "Failed to initialize the device");
+    ESP_LOGE("JSY", "Failed to initialize the device");
     return;
 }
 ```
@@ -67,17 +67,17 @@ float current_A = 0.0;
 // Read the voltage for phase A
 ret = jsymk333_read_voltage_A(device_handle, &voltage_A);
 if (ret == ESP_OK) {
-    ESP_LOGI("JSYM", "Voltage A: %.2f V", voltage_A);
+    ESP_LOGI("JSY", "Voltage A: %.2f V", voltage_A);
 } else {
-    ESP_LOGE("JSYM", "Failed to read voltage A");
+    ESP_LOGE("JSY", "Failed to read voltage A");
 }
 
 // Read the current for phase A
 ret = jsymk333_read_current_A(device_handle, &current_A);
 if (ret == ESP_OK) {
-    ESP_LOGI("JSYM", "Current A: %.2f A", current_A);
+    ESP_LOGI("JSY", "Current A: %.2f A", current_A);
 } else {
-    ESP_LOGE("JSYM", "Failed to read current A");
+    ESP_LOGE("JSY", "Failed to read current A");
 }
 ```
 

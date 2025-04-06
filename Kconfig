@@ -1,0 +1,9 @@
+menu "JSY-MK-333 Configuration"
+    config JSY_MK_333_PRINT_BUFFER
+        bool "Enable JSY-MK-333 print buffer"
+        default n
+        help
+            Enable JSY-MK-333 print buffer. This is used to store the data
+            before sending it to the serial port. This is useful for debugging
+            and testing purposes.
+endmenu
