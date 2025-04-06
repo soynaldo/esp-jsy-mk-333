@@ -1,4 +1,4 @@
-#include "jsymk33.h"
+#include "jsymk333.h"
 
 #include "jsy_crc.h"
 
@@ -19,11 +19,11 @@
  * @param timeout_ms Timeout in milliseconds for receiving data.
  * @return ESP_OK if data is successfully received, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_receive(jsymk33_handle_t handle, uint8_t *resp, uint16_t len, uint16_t* readed_bytes, uint32_t timeout_ms) {
+esp_err_t jsymk333_receive(jsymk333_handle_t handle, uint8_t *resp, uint16_t len, uint16_t* readed_bytes, uint32_t timeout_ms) {
     if (!handle) {
         return ESP_FAIL;
     }
-    jsymk33_config_t* conf = (jsymk33_config_t*)handle;
+    jsymk333_config_t* conf = (jsymk333_config_t*)handle;
     uint32_t time_cmp = esp_timer_get_time() / 1000L;
     *readed_bytes = 0;
 
@@ -50,11 +50,11 @@ esp_err_t jsymk33_receive(jsymk33_handle_t handle, uint8_t *resp, uint16_t len, 
  * @param slave_addr Address of the slave device (1 - 247).
  * @return ESP_OK if the command is successfully sent and validated (if applicable).
  */
-esp_err_t jsymk33_send_cmd_8(jsymk33_handle_t handle, uint8_t cmd, uint16_t r_addr, uint16_t val, bool check, uint16_t slave_addr) {
+esp_err_t jsymk333_send_cmd_8(jsymk333_handle_t handle, uint8_t cmd, uint16_t r_addr, uint16_t val, bool check, uint16_t slave_addr) {
     if (!handle) {
         return ESP_FAIL;
     }
-    jsymk33_config_t* conf = (jsymk33_config_t*)handle;
+    jsymk333_config_t* conf = (jsymk333_config_t*)handle;
     uint8_t send_buffer[8] = {0};
     uint8_t resp_buffer[8] = {0};
 
@@ -71,7 +71,7 @@ esp_err_t jsymk33_send_cmd_8(jsymk33_handle_t handle, uint8_t cmd, uint16_t r_ad
 
     if (check) {
         uint16_t readed_bytes = 0;
-        if (jsymk33_receive(handle, resp_buffer, 8, &readed_bytes, 500) != ESP_OK) {
+        if (jsymk333_receive(handle, resp_buffer, 8, &readed_bytes, 500) != ESP_OK) {
             return ESP_FAIL;
         }
 
@@ -95,11 +95,11 @@ esp_err_t jsymk33_send_cmd_8(jsymk33_handle_t handle, uint8_t cmd, uint16_t r_ad
  * @param factor Conversion factor to apply to the read value.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_single_register(jsymk33_handle_t handle, uint16_t address, float* reg_value, float factor) {
+esp_err_t jsymk333_read_single_register(jsymk333_handle_t handle, uint16_t address, float* reg_value, float factor) {
     uint16_t reg = 0;
-    if (jsymk33_send_cmd_8(handle, 0x03, address, 1, true, UINT16_MAX) == ESP_OK) {
+    if (jsymk333_send_cmd_8(handle, 0x03, address, 1, true, UINT16_MAX) == ESP_OK) {
         uint16_t readed_bytes = 0;
-        if (jsymk33_receive(handle, (uint8_t*)reg, 2, &readed_bytes, 500) == ESP_OK) {
+        if (jsymk333_receive(handle, (uint8_t*)&reg, 2, &readed_bytes, 500) == ESP_OK) {
             if (readed_bytes == 2) {
                 *reg_value = reg / factor;
                 return ESP_OK;
@@ -119,11 +119,11 @@ esp_err_t jsymk33_read_single_register(jsymk33_handle_t handle, uint16_t address
  * @param factor Conversion factor to apply to the read value.
  * @return ESP_OK on successful read, ESP_FAIL otherwise.
  */
-esp_err_t jsymk33_read_double_register(jsymk33_handle_t handle, uint16_t address, float* reg_value, float factor) {
+esp_err_t jsymk333_read_double_register(jsymk333_handle_t handle, uint16_t address, float* reg_value, float factor) {
     uint16_t regs[2];
-    if (jsymk33_send_cmd_8(handle, 0x03, address, 2, true, UINT16_MAX) == ESP_OK) {
+    if (jsymk333_send_cmd_8(handle, 0x03, address, 2, true, UINT16_MAX) == ESP_OK) {
         uint16_t readed_bytes = 0;
-        if (jsymk33_receive(handle, (uint8_t*)regs, 4, &readed_bytes, 500) == ESP_OK) {
+        if (jsymk333_receive(handle, (uint8_t*)regs, 4, &readed_bytes, 500) == ESP_OK) {
             if (readed_bytes == 4) {
                 uint32_t value = (regs[0] << 16) | regs[1];
                 *reg_value = value / factor;
@@ -135,7 +135,7 @@ esp_err_t jsymk33_read_double_register(jsymk33_handle_t handle, uint16_t address
     return ESP_FAIL;
 }
 
-esp_err_t jsymk33_init(jsymk33_handle_t handle, jsymk33_config_t *conf) {
+esp_err_t jsymk333_init(jsymk333_handle_t handle, jsymk333_config_t *conf) {
     uart_config_t uart_config;
     esp_err_t ret = ESP_OK;
     memset(&uart_config, 0, sizeof(uart_config_t));
@@ -147,17 +147,17 @@ esp_err_t jsymk33_init(jsymk33_handle_t handle, jsymk33_config_t *conf) {
     uart_config.rx_flow_ctrl_thresh = 122;
 
     // Configure UART parameters
-    ESP_GOTO_ON_ERROR(uart_param_config(conf->uart_num, &uart_config), err, "JSYMK33", "Failed to configure UART parameters");
-    ESP_GOTO_ON_ERROR(uart_set_pin(conf->uart_num, conf->tx_pin, conf->rx_pin, -1, -1), err, "JSYMK33", "Failed to set UART pins");
+    ESP_GOTO_ON_ERROR(uart_param_config(conf->uart_num, &uart_config), err, "JSYMK333", "Failed to configure UART parameters");
+    ESP_GOTO_ON_ERROR(uart_set_pin(conf->uart_num, conf->tx_pin, conf->rx_pin, -1, -1), err, "JSYMK333", "Failed to set UART pins");
 
     // Install UART driver using an event queue here
-    ESP_GOTO_ON_ERROR(uart_driver_install(conf->uart_num, conf->uart_buffer_size, conf->uart_buffer_size, 10, &conf->uart_queue, 0), err, "JSYMK33", "Failed to install UART driver");
+    ESP_GOTO_ON_ERROR(uart_driver_install(conf->uart_num, conf->uart_buffer_size, conf->uart_buffer_size, 10, &conf->uart_queue, 0), err, "JSYMK333", "Failed to install UART driver");
   
     // Flush the input buffer
     uart_flush_input(conf->uart_num);
 
-    handle = (jsymk33_handle_t)malloc(sizeof(jsymk33_config_t));
-    memcpy(handle, conf, sizeof(jsymk33_config_t));
+    handle = (jsymk333_handle_t)malloc(sizeof(jsymk333_config_t));
+    memcpy(handle, conf, sizeof(jsymk333_config_t));
 
     return ESP_OK;
 err:
@@ -169,17 +169,17 @@ err:
         free(handle);
         handle = NULL;
     }
-    ESP_LOGE("JSYMK33", "Failed to initialize JSYMK33");
+    ESP_LOGE("JSYMK333", "Failed to initialize JSYMK333");
     return ESP_FAIL;
 }
 
-esp_err_t jsymk33_deinit(jsymk33_handle_t handle) {
+esp_err_t jsymk333_deinit(jsymk333_handle_t handle) {
     if (!handle) {
         return ESP_FAIL;
     }
 
     esp_err_t err = ESP_OK;
-    jsymk33_config_t* conf = (jsymk33_config_t*)handle;
+    jsymk333_config_t* conf = (jsymk333_config_t*)handle;
 
     // Delete the UART driver
     if (uart_is_driver_installed(conf->uart_num)) {
@@ -191,158 +191,158 @@ esp_err_t jsymk33_deinit(jsymk33_handle_t handle) {
     return err;
 }
 
-esp_err_t jsymk33_read_voltage_A(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0100, value, 100.0); 
+esp_err_t jsymk333_read_voltage_A(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0100, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_voltage_B(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0101, value, 100.0); 
+esp_err_t jsymk333_read_voltage_B(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0101, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_voltage_C(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0102, value, 100.0); 
+esp_err_t jsymk333_read_voltage_C(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0102, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_current_A(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0103, value, 100.0); 
+esp_err_t jsymk333_read_current_A(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0103, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_current_B(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0104, value, 100.0); 
+esp_err_t jsymk333_read_current_B(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0104, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_current_C(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0105, value, 100.0); 
+esp_err_t jsymk333_read_current_C(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0105, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_active_power_A(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0106, value, 1.0); 
+esp_err_t jsymk333_read_active_power_A(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0106, value, 1.0); 
 }
 
-esp_err_t jsymk33_read_active_power_B(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0107, value, 1.0); 
+esp_err_t jsymk333_read_active_power_B(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0107, value, 1.0); 
 }
 
-esp_err_t jsymk33_read_active_power_C(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0108, value, 1.0); 
+esp_err_t jsymk333_read_active_power_C(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0108, value, 1.0); 
 }
 
-esp_err_t jsymk33_read_total_active_power(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_double_register(handle, 0x0109, value, 1.0); 
+esp_err_t jsymk333_read_total_active_power(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_double_register(handle, 0x0109, value, 1.0); 
 }
 
-esp_err_t jsymk33_read_reactive_power_A(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x010B, value, 1.0); 
+esp_err_t jsymk333_read_reactive_power_A(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x010B, value, 1.0); 
 }
 
-esp_err_t jsymk33_read_reactive_power_B(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x010C, value, 1.0); 
+esp_err_t jsymk333_read_reactive_power_B(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x010C, value, 1.0); 
 }
 
-esp_err_t jsymk33_read_reactive_power_C(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x010D, value, 1.0); 
+esp_err_t jsymk333_read_reactive_power_C(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x010D, value, 1.0); 
 }
 
-esp_err_t jsymk33_read_total_reactive_power(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_double_register(handle, 0x010E, value, 1.0); 
+esp_err_t jsymk333_read_total_reactive_power(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_double_register(handle, 0x010E, value, 1.0); 
 }
 
-esp_err_t jsymk33_read_apparent_power_A(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0110, value, 1.0); 
+esp_err_t jsymk333_read_apparent_power_A(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0110, value, 1.0); 
 }
 
-esp_err_t jsymk33_read_apparent_power_B(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0111, value, 1.0); 
+esp_err_t jsymk333_read_apparent_power_B(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0111, value, 1.0); 
 }
 
-esp_err_t jsymk33_read_apparent_power_C(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0112, value, 1.0); 
+esp_err_t jsymk333_read_apparent_power_C(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0112, value, 1.0); 
 }
 
-esp_err_t jsymk33_read_total_apparent_power(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_double_register(handle, 0x0113, value, 1.0);
+esp_err_t jsymk333_read_total_apparent_power(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_double_register(handle, 0x0113, value, 1.0);
 }
 
-esp_err_t jsymk33_read_frequency(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0115, value, 100.0); 
+esp_err_t jsymk333_read_frequency(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0115, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_power_factor_A(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0116, value, 1000.0); 
+esp_err_t jsymk333_read_power_factor_A(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0116, value, 1000.0); 
 }
 
-esp_err_t jsymk33_read_power_factor_B(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0117, value, 1000.0); 
+esp_err_t jsymk333_read_power_factor_B(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0117, value, 1000.0); 
 }
 
-esp_err_t jsymk33_read_power_factor_C(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0118, value, 1000.0); 
+esp_err_t jsymk333_read_power_factor_C(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0118, value, 1000.0); 
 }
 
-esp_err_t jsymk33_read_total_power_factor(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_single_register(handle, 0x0119, value, 1000.0); 
+esp_err_t jsymk333_read_total_power_factor(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_single_register(handle, 0x0119, value, 1000.0); 
 }
 
-esp_err_t jsymk33_read_active_energy_A(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_double_register(handle, 0x011A, value, 100.0); 
+esp_err_t jsymk333_read_active_energy_A(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_double_register(handle, 0x011A, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_active_energy_B(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_double_register(handle, 0x011C, value, 100.0); 
+esp_err_t jsymk333_read_active_energy_B(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_double_register(handle, 0x011C, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_active_energy_C(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_double_register(handle, 0x011E, value, 100.0); 
+esp_err_t jsymk333_read_active_energy_C(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_double_register(handle, 0x011E, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_total_active_energy(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_double_register(handle, 0x0120, value, 100.0); 
+esp_err_t jsymk333_read_total_active_energy(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_double_register(handle, 0x0120, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_reactive_energy_A(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_double_register(handle, 0x0122, value, 100.0); 
+esp_err_t jsymk333_read_reactive_energy_A(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_double_register(handle, 0x0122, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_reactive_energy_B(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_double_register(handle, 0x0124, value, 100.0); 
+esp_err_t jsymk333_read_reactive_energy_B(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_double_register(handle, 0x0124, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_reactive_energy_C(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_double_register(handle, 0x0126, value, 100.0); 
+esp_err_t jsymk333_read_reactive_energy_C(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_double_register(handle, 0x0126, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_total_reactive_energy(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_double_register(handle, 0x0128, value, 100.0); 
+esp_err_t jsymk333_read_total_reactive_energy(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_double_register(handle, 0x0128, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_apparent_energy_A(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_double_register(handle, 0x012A, value, 100.0); 
+esp_err_t jsymk333_read_apparent_energy_A(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_double_register(handle, 0x012A, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_apparent_energy_B(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_double_register(handle, 0x012C, value, 100.0); 
+esp_err_t jsymk333_read_apparent_energy_B(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_double_register(handle, 0x012C, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_apparent_energy_C(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_double_register(handle, 0x012E, value, 100.0); 
+esp_err_t jsymk333_read_apparent_energy_C(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_double_register(handle, 0x012E, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_total_apparent_energy(jsymk33_handle_t handle, float *value) { 
-    return jsymk33_read_double_register(handle, 0x0130, value, 100.0); 
+esp_err_t jsymk333_read_total_apparent_energy(jsymk333_handle_t handle, float *value) { 
+    return jsymk333_read_double_register(handle, 0x0130, value, 100.0); 
 }
 
-esp_err_t jsymk33_read_power_direction(jsymk33_handle_t handle, uint16_t *value) {
+esp_err_t jsymk333_read_power_direction(jsymk333_handle_t handle, uint16_t *value) {
     float v_value = 0;
-    if (jsymk33_read_single_register(handle, 0x0132, &v_value, 1.0) == ESP_OK) {
+    if (jsymk333_read_single_register(handle, 0x0132, &v_value, 1.0) == ESP_OK) {
         *value = (uint16_t)v_value;
         return ESP_OK;
     }
     return ESP_FAIL;
 }
 
-esp_err_t jsymk33_read_alarm_status(jsymk33_handle_t handle, uint16_t *value) {
+esp_err_t jsymk333_read_alarm_status(jsymk333_handle_t handle, uint16_t *value) {
     float v_value = 0;
-    if (jsymk33_read_single_register(handle, 0x0133, &v_value, 1.0) == ESP_OK) {
+    if (jsymk333_read_single_register(handle, 0x0133, &v_value, 1.0) == ESP_OK) {
         *value = (uint16_t)v_value;
         return ESP_OK;
     }
