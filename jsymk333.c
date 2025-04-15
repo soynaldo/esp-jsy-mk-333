@@ -5,6 +5,7 @@
 #include "esp_check.h"
 #include "esp_timer.h"
 #include "driver/uart.h"
+#include "jsymk333_regs.h"
 
 
 /**
@@ -50,20 +51,19 @@ esp_err_t jsymk333_receive(jsymk333_handle_t handle, uint8_t *resp, uint16_t len
  *
  * @param handle Pointer to the communication handle.
  * @param cmd Command code to send.
- * @param r_addr Register address to communicate with.
- * @param val Value to be sent to the register.
+ * @param reg_addr Register address to communicate with.
+ * @param regs_num Value to be sent to the register.
  * @param check Boolean flag indicating whether to check the response.
  * @param slave_addr Address of the slave device (1 - 247).
  * @return ESP_OK if the command is successfully sent and validated (if applicable).
  */
-esp_err_t jsymk333_send_cmd_8(jsymk333_handle_t handle, uint8_t cmd, uint16_t r_addr, uint16_t val, bool check, uint16_t slave_addr) {
+esp_err_t jsymk333_send_cmd_8(jsymk333_handle_t handle, uint8_t cmd, uint16_t reg_addr, uint16_t regs_num, uint16_t slave_addr) {
     if (!handle) {
         ESP_LOGE("JSYMK333", "Invalid handle");
         return ESP_FAIL;
     }
     jsymk333_config_t* conf = (jsymk333_config_t*)handle;
     uint8_t send_buffer[8] = {0};
-    uint8_t resp_buffer[8] = {0};
 
     if ((slave_addr == 0xFFFF) || (slave_addr < 0x01) || (slave_addr > 0xF7)) {
         slave_addr = 1; // Default address
@@ -71,31 +71,15 @@ esp_err_t jsymk333_send_cmd_8(jsymk333_handle_t handle, uint8_t cmd, uint16_t r_
 
     send_buffer[0] = slave_addr;
     send_buffer[1] = cmd;
-    memcpy(send_buffer, &r_addr, sizeof(r_addr));
-    memcpy(send_buffer, &val, sizeof(val));
+    send_buffer[2] = (reg_addr >> 8) & 0xFF;
+    send_buffer[3] = (reg_addr) & 0xFF;
+    send_buffer[4] = (regs_num >> 8) & 0xFF;
+    send_buffer[5] = (regs_num) & 0xFF;
     jsy_set_crc(send_buffer, 8);
     uart_write_bytes(conf->uart_num, send_buffer, 8);
 #if CONFIG_JSY_MK_333_PRINT_BUFFER
     ESP_LOG_BUFFER_HEXDUMP("JSYMK333-TX", send_buffer, 8, ESP_LOG_INFO);
 #endif
-
-    if (check) {
-        uint16_t readed_bytes = 0;
-        if (jsymk333_receive(handle, resp_buffer, 8, &readed_bytes, 500) != ESP_OK) {
-            ESP_LOGE("JSYMK333", "Failed to receive response");
-            return ESP_FAIL;
-        }
-
-        if (readed_bytes != 8) {
-            ESP_LOGE("JSYMK333", "Invalid response length: %d", readed_bytes);
-            return ESP_FAIL;
-        }
-
-        if (memcmp(send_buffer, resp_buffer, 8)) {
-            ESP_LOGE("JSYMK333", "Response mismatch");
-            return ESP_FAIL;
-        }
-    }
     return ESP_OK;
 }
 
@@ -110,7 +94,7 @@ esp_err_t jsymk333_send_cmd_8(jsymk333_handle_t handle, uint8_t cmd, uint16_t r_
  */
 esp_err_t jsymk333_read_single_register(jsymk333_handle_t handle, uint16_t address, float* reg_value, float factor) {
     uint16_t reg = 0;
-    if (jsymk333_send_cmd_8(handle, 0x03, address, 1, true, UINT16_MAX) == ESP_OK) {
+    if (jsymk333_send_cmd_8(handle, 0x03, address, 1, UINT16_MAX) == ESP_OK) {
         uint16_t readed_bytes = 0;
         if (jsymk333_receive(handle, (uint8_t*)&reg, 2, &readed_bytes, 500) == ESP_OK) {
             if (readed_bytes == 2) {
@@ -134,7 +118,7 @@ esp_err_t jsymk333_read_single_register(jsymk333_handle_t handle, uint16_t addre
  */
 esp_err_t jsymk333_read_double_register(jsymk333_handle_t handle, uint16_t address, float* reg_value, float factor) {
     uint16_t regs[2];
-    if (jsymk333_send_cmd_8(handle, 0x03, address, 2, true, UINT16_MAX) == ESP_OK) {
+    if (jsymk333_send_cmd_8(handle, 0x03, address, 2, UINT16_MAX) == ESP_OK) {
         uint16_t readed_bytes = 0;
         if (jsymk333_receive(handle, (uint8_t*)regs, 4, &readed_bytes, 500) == ESP_OK) {
             if (readed_bytes == 4) {
@@ -146,6 +130,24 @@ esp_err_t jsymk333_read_double_register(jsymk333_handle_t handle, uint16_t addre
     }
     
     return ESP_FAIL;
+}
+
+esp_err_t jsymk333_read_registers(jsymk333_handle_t handle, uint16_t address, uint16_t num, uint8_t* value) {
+    if (jsymk333_send_cmd_8(handle, 0x03, address, num, UINT16_MAX) == ESP_OK) {
+        uint16_t readed_bytes = 0;
+        uint16_t expected_bytes = JSY_MK_RESPONSE_SIZE_READ + JSY_MK_333_REGISTER_LEN * num;
+        if (jsymk333_receive(handle, value, expected_bytes, &readed_bytes, 500) == ESP_OK) {
+            if (readed_bytes == expected_bytes) {
+                return ESP_OK;
+            }
+        }
+    }
+    
+    return ESP_FAIL;
+}
+
+esp_err_t jsymk333_read_all_registers(jsymk333_handle_t handle, uint8_t* value) {
+    return jsymk333_read_registers(handle, JSY_MK_333_REGISTER_START, JSY_MK_333_REGISTER_COUNT, value);
 }
 
 esp_err_t jsymk333_init(jsymk333_handle_t *handle, jsymk333_config_t *conf) {

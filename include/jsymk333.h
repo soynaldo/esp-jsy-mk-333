@@ -54,6 +54,10 @@ esp_err_t jsymk333_init(jsymk333_handle_t *handle, jsymk333_config_t *conf);
 esp_err_t jsymk333_deinit(jsymk333_handle_t handle);
 
 
+esp_err_t jsymk333_read_registers(jsymk333_handle_t handle, uint16_t address, uint16_t num, uint8_t* value);
+
+esp_err_t jsymk333_read_all_registers(jsymk333_handle_t handle, uint8_t* value);
+
 /**
  * @brief Reads the phase A voltage.
  *

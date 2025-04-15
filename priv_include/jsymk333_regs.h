@@ -1,0 +1,132 @@
+///////////////////////////////////////////////////////////////////////////////
+// JSY COMMON REGISTERS
+///////////////////////////////////////////////////////////////////////////////
+
+// system
+#define JSY_MK_REGISTER_MODEL1        0x0000 // RO - JSY Model
+#define JSY_MK_REGISTER_MODEL2        0x0001 // RO - JSY Mode and Version
+#define JSY_MK_REGISTER_VOLTAGE_RANGE 0x0002 // RO - Example: 250V
+#define JSY_MK_REGISTER_CURRENT_RANGE 0x0003 // RO - Example: 800 (800 / 10 == 80A)
+
+// communication
+#define JSY_MK_REGISTER_ID_AND_BAUDS 0x0004 // RW - ID (high byte) and Bauds Rate (low byte)
+#define JSY_MK_REGISTER_SWITCH_MODE  0x0005 // RW - Switch Mode (AC/DC)
+#define JSY_MK_MODE_AC               0x01   // AC Mode
+#define JSY_MK_MODE_DC               0x02   // DC Mode
+
+
+///////////////////////////////////////////////////////////////////////////////
+// JSY-MK-333 REGISTERS
+///////////////////////////////////////////////////////////////////////////////
+
+#define JSY_MK_333_REGISTER_PHASE_A_VOLTAGE                  0x0100 // RO
+#define JSY_MK_333_REGISTER_PHASE_B_VOLTAGE                  0x0101 // RO
+#define JSY_MK_333_REGISTER_PHASE_C_VOLTAGE                  0x0102 // RO
+#define JSY_MK_333_REGISTER_PHASE_A_CURRENT                  0x0103 // RO
+#define JSY_MK_333_REGISTER_PHASE_B_CURRENT                  0x0104 // RO
+#define JSY_MK_333_REGISTER_PHASE_C_CURRENT                  0x0105 // RO
+#define JSY_MK_333_REGISTER_PHASE_A_ACTIVE_POWER             0x0106 // RO
+#define JSY_MK_333_REGISTER_PHASE_B_ACTIVE_POWER             0x0107 // RO
+#define JSY_MK_333_REGISTER_PHASE_C_ACTIVE_POWER             0x0108 // RO
+#define JSY_MK_333_REGISTER_TOTAL_ACTIVE_POWER               0x0109 // RO + 0x010A
+#define JSY_MK_333_REGISTER_PHASE_A_REACTIVE_POWER           0x010B // RO
+#define JSY_MK_333_REGISTER_PHASE_B_REACTIVE_POWER           0x010C // RO
+#define JSY_MK_333_REGISTER_PHASE_C_REACTIVE_POWER           0x010D // RO
+#define JSY_MK_333_REGISTER_TOTAL_REACTIVE_POWER             0x010E // RO + 0x010F
+#define JSY_MK_333_REGISTER_PHASE_A_APPARENT_POWER           0x0110 // RO
+#define JSY_MK_333_REGISTER_PHASE_B_APPARENT_POWER           0x0111 // RO
+#define JSY_MK_333_REGISTER_PHASE_C_APPARENT_POWER           0x0112 // RO
+#define JSY_MK_333_REGISTER_TOTAL_APPARENT_POWER             0x0113 // RO + 0x0114
+#define JSY_MK_333_REGISTER_FREQUENCY                        0x0115 // RO
+#define JSY_MK_333_REGISTER_PHASE_A_POWER_FACTOR             0x0116 // RO
+#define JSY_MK_333_REGISTER_PHASE_B_POWER_FACTOR             0x0117 // RO
+#define JSY_MK_333_REGISTER_PHASE_C_POWER_FACTOR             0x0118 // RO
+#define JSY_MK_333_REGISTER_TOTAL_POWER_FACTOR               0x0119 // RO
+#define JSY_MK_333_REGISTER_PHASE_A_ACTIVE_ENERGY            0x011A // RO + 0x011B
+#define JSY_MK_333_REGISTER_PHASE_B_ACTIVE_ENERGY            0x011C // RO + 0x011D
+#define JSY_MK_333_REGISTER_PHASE_C_ACTIVE_ENERGY            0x011E // RO + 0x011F
+#define JSY_MK_333_REGISTER_TOTAL_ACTIVE_ENERGY              0x0120 // RO + 0x0121
+#define JSY_MK_333_REGISTER_PHASE_A_REACTIVE_ENERGY          0x0122 // RO + 0x0123
+#define JSY_MK_333_REGISTER_PHASE_B_REACTIVE_ENERGY          0x0124 // RO + 0x0125
+#define JSY_MK_333_REGISTER_PHASE_C_REACTIVE_ENERGY          0x0126 // RO + 0x0127
+#define JSY_MK_333_REGISTER_TOTAL_REACTIVE_ENERGY            0x0128 // RO + 0x0129
+#define JSY_MK_333_REGISTER_PHASE_A_APPARENT_ENERGY          0x012A // RO + 0x012B
+#define JSY_MK_333_REGISTER_PHASE_B_APPARENT_ENERGY          0x012C // RO + 0x012D
+#define JSY_MK_333_REGISTER_PHASE_C_APPARENT_ENERGY          0x012E // RO + 0x012F
+#define JSY_MK_333_REGISTER_TOTAL_APPARENT_ENERGY            0x0130 // RO + 0x0131
+#define JSY_MK_333_REGISTER_POWER_SIGNS                      0x0132 // RO
+#define JSY_MK_333_REGISTER_ALARMS                           0x0133 // RO
+#define JSY_MK_333_REGISTER_PHASE_A_ACTIVE_ENERGY_IMPORTED   0x0134 // RO + 0x0135
+#define JSY_MK_333_REGISTER_PHASE_B_ACTIVE_ENERGY_IMPORTED   0x0136 // RO + 0x0137
+#define JSY_MK_333_REGISTER_PHASE_C_ACTIVE_ENERGY_IMPORTED   0x0138 // RO + 0x0139
+#define JSY_MK_333_REGISTER_TOTAL_ACTIVE_ENERGY_IMPORTED     0x013A // RO + 0x013B
+#define JSY_MK_333_REGISTER_PHASE_A_ACTIVE_ENERGY_RETURNED   0x013C // RO + 0x013D
+#define JSY_MK_333_REGISTER_PHASE_B_ACTIVE_ENERGY_RETURNED   0x013E // RO + 0x013F
+#define JSY_MK_333_REGISTER_PHASE_C_ACTIVE_ENERGY_RETURNED   0x0140 // RO + 0x0141
+#define JSY_MK_333_REGISTER_TOTAL_ACTIVE_ENERGY_RETURNED     0x0142 // RO + 0x0143
+#define JSY_MK_333_REGISTER_PHASE_A_REACTIVE_ENERGY_IMPORTED 0x0144 // RO + 0x0145
+#define JSY_MK_333_REGISTER_PHASE_B_REACTIVE_ENERGY_IMPORTED 0x0146 // RO + 0x0147
+#define JSY_MK_333_REGISTER_PHASE_C_REACTIVE_ENERGY_IMPORTED 0x0148 // RO + 0x0149
+#define JSY_MK_333_REGISTER_TOTAL_REACTIVE_ENERGY_IMPORTED   0x014A // RO + 0x014B
+#define JSY_MK_333_REGISTER_PHASE_A_REACTIVE_ENERGY_RETURNED 0x014C // RO + 0x014D
+#define JSY_MK_333_REGISTER_PHASE_B_REACTIVE_ENERGY_RETURNED 0x014E // RO + 0x014F
+#define JSY_MK_333_REGISTER_PHASE_C_REACTIVE_ENERGY_RETURNED 0x0150 // RO + 0x0151
+#define JSY_MK_333_REGISTER_TOTAL_REACTIVE_ENERGY_RETURNED   0x0152 // RO + 0x0153
+#define JSY_MK_333_REGISTER_PHASE_A_L_U                      0x0154 // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_B_L_U                      0x0155 // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_C_L_U                      0x0156 // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_A_PHASE_ANGLE_U            0x0157 // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_B_PHASE_ANGLE_U            0x0158 // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_C_PHASE_ANGLE_U            0x0159 // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_A_PHASE_ANGLE_I            0x015A // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_B_PHASE_ANGLE_I            0x015B // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_C_PHASE_ANGLE_I            0x015C // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_A_PHASE_ANGLE_UI           0x015D // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_B_PHASE_ANGLE_UI           0x015E // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_C_PHASE_ANGLE_UI           0x015F // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_A_THD_U                    0x0160 // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_B_THD_U                    0x0161 // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_C_THD_U                    0x0162 // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_A_THD_I                    0x0163 // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_B_THD_I                    0x0164 // RO -- WARNING: UNDOCUMENTED
+#define JSY_MK_333_REGISTER_PHASE_C_THD_I                    0x0165 // RO -- WARNING: UNDOCUMENTED
+
+#define JSY_MK_333_REGISTER_LEN   2   // 2 bytes per register
+#define JSY_MK_333_REGISTER_COUNT 102 // registers
+#define JSY_MK_333_REGISTER_START JSY_MK_333_REGISTER_PHASE_A_VOLTAGE
+
+
+///////////////////////////////////////////////////////////////////////////////
+// JSY PROTOCOL
+///////////////////////////////////////////////////////////////////////////////
+
+// commands values
+#define JSY_MK_CMD_READ_REGISTERS  0x03
+#define JSY_MK_CMD_READ_RELAY1     0x01
+#define JSY_MK_CMD_WRITE_REGISTERS 0x10
+#define JSY_MK_CMD_WRITE_RELAY1    0x05
+
+// request indexes
+#define JSY_MK_REQUEST_ADDRESS                  0
+#define JSY_MK_REQUEST_CMD                      1
+#define JSY_MK_REQUEST_READ_REGISTER_ADDR_HIGH  2
+#define JSY_MK_REQUEST_READ_REGISTER_ADDR_LOW   3
+#define JSY_MK_REQUEST_READ_REGISTER_COUNT_HIGH 4
+#define JSY_MK_REQUEST_READ_REGISTER_COUNT_LOW  5
+#define JSY_MK_REQUEST_SET_ADDRESS              7
+#define JSY_MK_REQUEST_SET_BAUDS                8
+#define JSY_MK_REQUEST_SET_MODE                 8
+
+// response indexes
+#define JSY_MK_RESPONSE_ADDRESS  0
+#define JSY_MK_RESPONSE_CMD      1
+#define JSY_MK_RESPONSE_DATA_LEN 2
+#define JSY_MK_RESPONSE_DATA     3
+
+// response
+#define JSY_MK_RESPONSE_SIZE_READ         5                          // address(1), cmd(1), len(1), data(?), crc(2)
+#define JSY_MK_RESPONSE_SIZE_READ_MODEL   JSY_MK_RESPONSE_SIZE_READ + 2 // address(1), cmd(1), len(1), data(2), crc(2)
+#define JSY_MK_RESPONSE_SIZE_READ_MODE    JSY_MK_RESPONSE_SIZE_READ_MODEL
+#define JSY_MK_RESPONSE_SIZE_RESET_ENERGY 8 // address(1), cmd(1), len(1), register(2), count(2), crc(2)
+#define JSY_MK_RESPONSE_SIZE_SWITCH_MODE  8 // address(1), cmd(1), register(2), data(2), crc(2)
+#define JSY_MK_RESPONSE_SIZE_SET_COM      8 // address(1), cmd(1), data(4), crc(2)
