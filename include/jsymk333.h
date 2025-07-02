@@ -21,6 +21,7 @@ typedef struct
     uint16_t tx_pin;               /**< GPIO pin number for UART TX. */
     uint32_t uart_buffer_size;     /**< Size of the buffer for UART communication. */
     uint8_t* buffer;
+    uint32_t read_timeout;          /**< Timeout for reading data in milliseconds. */
 } jsymk333_config_t;
 
 /**
@@ -52,9 +53,26 @@ esp_err_t jsymk333_init(jsymk333_handle_t *handle, jsymk333_config_t *conf);
  */
 esp_err_t jsymk333_deinit(jsymk333_handle_t handle);
 
-
+/**
+ * @brief Reads a specific number of registers starting from a given address.
+ *
+ * This function sends a command to read a specified number of registers from the device.
+ *
+ * @param handle Pointer to the communication handle.
+ * @param address The starting address of the registers to read.
+ * @param num The number of registers to read.
+ * @return ESP_OK on successful read, ESP_FAIL otherwise.
+ */
 esp_err_t jsymk333_read_registers(jsymk333_handle_t handle, uint16_t address, uint16_t num);
 
+/**
+ * @brief Reads all registers from the device.
+ *
+ * This function reads all registers starting from the defined start address and count.
+ *
+ * @param handle Pointer to the communication handle.
+ * @return ESP_OK on successful read, ESP_FAIL otherwise.
+ */
 esp_err_t jsymk333_read_all_registers(jsymk333_handle_t handle);
 
 /**

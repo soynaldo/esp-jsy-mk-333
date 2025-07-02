@@ -20,7 +20,7 @@
  * @param timeout_ms Timeout in milliseconds for receiving data.
  * @return ESP_OK if data is successfully received, ESP_FAIL otherwise.
  */
-esp_err_t jsymk333_receive(jsymk333_handle_t handle, uint16_t len, uint16_t* readed_bytes, uint32_t timeout_ms) {
+esp_err_t jsymk333_receive(jsymk333_handle_t handle, uint16_t len, uint16_t* readed_bytes) {
     if (!handle) {
         ESP_LOGE("JSYMK333", "Invalid handle");
         return ESP_FAIL;
@@ -29,7 +29,7 @@ esp_err_t jsymk333_receive(jsymk333_handle_t handle, uint16_t len, uint16_t* rea
     uint32_t time_cmp = esp_timer_get_time() / 1000L;
     *readed_bytes = 0;
 
-    while ((*readed_bytes < len) && ((esp_timer_get_time() / 1000L) - time_cmp) < timeout_ms) {
+    while ((*readed_bytes < len) && ((esp_timer_get_time() / 1000L) - time_cmp) < conf->read_timeout) {
         size_t available = 0;
         if (uart_get_buffered_data_len(conf->uart_num, &available) == ESP_OK) {
             if (available) {
@@ -130,7 +130,7 @@ esp_err_t jsymk333_read_registers(jsymk333_handle_t handle, uint16_t address, ui
     if (jsymk333_send_cmd_8(handle, 0x03, address, num) == ESP_OK) {
         uint16_t readed_bytes = 0;
         uint16_t expected_bytes = JSY_MK_RESPONSE_SIZE_READ + JSY_MK_333_REGISTER_LEN * num;
-        if (jsymk333_receive(handle, expected_bytes, &readed_bytes, 500) == ESP_OK) {
+        if (jsymk333_receive(handle, expected_bytes, &readed_bytes) == ESP_OK) {
             if (readed_bytes == expected_bytes) {
                 return ESP_OK;
             }
