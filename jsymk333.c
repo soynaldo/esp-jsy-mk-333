@@ -7,6 +7,8 @@
 #include "driver/uart.h"
 #include "jsymk333_regs.h"
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 /**
  * @brief Receives data from the UART port.
@@ -37,6 +39,7 @@ esp_err_t jsymk333_receive(jsymk333_handle_t handle, uint16_t len, uint16_t* rea
                 *readed_bytes += available;
             }
         }
+        vTaskDelay(pdMS_TO_TICKS(1)); // Delay to avoid busy-waiting
     }
 
 #if CONFIG_JSY_MK_333_PRINT_BUFFER
